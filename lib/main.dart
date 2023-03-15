@@ -12,14 +12,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Dialogflow Flutter',
+      title: 'main',
       theme: new ThemeData(
         fontFamily: 'Inter',
         primaryColor: Color.fromARGB(255,0, 154, 115),
       ),
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
-      home: ChatbotPage(), //เอาชื่อคลาสมาใส่
+      home: ChatList(), //เอาชื่อคลาสมาใส่
     );
   }
 }
