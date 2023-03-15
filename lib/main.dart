@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/pages/user/chat_list.dart'; // หน้า view ของตัวเอง
 import 'package:chatbot_frontend/pages/user/test_chat_list.dart';
 import 'package:chatbot_frontend/pages/user/chat.dart';
+import 'package:chatbot_frontend/test.dart';
 void main() {
   runApp(MyApp());
 }
