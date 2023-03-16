@@ -9,42 +9,78 @@ class ChatList extends StatefulWidget {
 
 class _ChatListState extends State<ChatList> {
   // You can customize the data for your chat list here
-  List<String> chatHistory = [    "Alice",    "Bob",    "Charlie",    "Dave",    "Eve",    "Frank",    "Grace",    "Heidi",    "Ivan",    "Judy",    "Kevin",    "Lucy",    "Mallory",    "Nancy",    "Oliver",    "Peggy",    "Quincy",    "Randy",    "Samantha",    "Tina",    "Ursula",    "Victor",    "Wendy",    "Xavier",    "Yvonne",    "Zoe"  ];
+  List<String> chatHistory = [
+    "Alice",
+    "Bob",
+    "Charlie",
+    "Dave",
+    "Eve",
+    "Frank",
+    "Grace",
+    "Heidi",
+    "Ivan",
+    "Judy",
+    "Kevin",
+    "Lucy",
+    "Mallory",
+    "Nancy",
+    "Oliver",
+    "Peggy",
+    "Quincy",
+    "Randy",
+    "Samantha",
+    "Tina",
+    "Ursula",
+    "Victor",
+    "Wendy",
+    "Xavier",
+    "Yvonne",
+    "Zoe"
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
         height: 50,
-        margin: const EdgeInsets.only(top:10, left:10, right:10),
+        margin: const EdgeInsets.only(top: 10, left: 10, right: 10),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(255,237, 238, 240),
+            primary: Color.fromARGB(255, 237, 238, 240),
             onPrimary: Colors.black,
             shadowColor: Colors.black,
             elevation: 10.0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
           ),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatbotPage()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ChatbotPage()));
           },
           child: const Center(
-            child: Text('สร้างข้อความใหม่', style: TextStyle(fontWeight: FontWeight.bold),),
+            child: Text(
+              'สร้างข้อความใหม่',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
-          
         ),
       ),
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        title: Text("ข้อความ",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        title: Text("ข้อความ",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         actions: <Widget>[
           Container(
-            margin: EdgeInsets.only(right:20),
+            margin: EdgeInsets.only(right: 20),
             child: IconButton(
-              icon:const Icon(Icons.account_circle_rounded,color: Colors.black, size: 40,), onPressed: () {  },
+              icon: const Icon(
+                Icons.account_circle_rounded,
+                color: Colors.black,
+                size: 40,
+              ),
+              onPressed: () {},
             ),
           )
         ],
@@ -76,7 +112,7 @@ class _ChatListState extends State<ChatList> {
           ),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.only(bottom:60.0),
+              padding: const EdgeInsets.only(bottom: 60.0),
               child: ListView.builder(
                 itemCount: chatHistory.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -105,19 +141,18 @@ class _ChatListState extends State<ChatList> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(chatHistory[index]),
-                        trailing: Text(DateFormat('HH:mm').format(DateTime.now())),
+                        trailing:
+                            Text(DateFormat('HH:mm').format(DateTime.now())),
                         onTap: () {
                           // Handle chat tile press here
                         },
                       ),
-                      
-                    ), 
+                    ),
                   );
                 },
               ),
             ),
           ),
-          
         ],
       ),
     );

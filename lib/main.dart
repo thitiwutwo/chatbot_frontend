@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/pages/user/chat_list.dart'; // หน้า view ของตัวเอง
 import 'package:chatbot_frontend/pages/user/test_chat_list.dart';
 import 'package:chatbot_frontend/pages/user/chat.dart';
-import 'package:chatbot_frontend/test.dart';
+import 'package:chatbot_frontend/pages/register.dart';
+import 'package:chatbot_frontend/pages/login.dart';
+
+// import 'package:chatbot_frontend/test.dart';
 void main() {
   runApp(MyApp());
 }
@@ -15,11 +18,12 @@ class MyApp extends StatelessWidget {
       title: 'main',
       theme: new ThemeData(
         fontFamily: 'Inter',
-        primaryColor: Color.fromARGB(255,0, 154, 115),
+        primaryColor: Color.fromARGB(255, 0, 154, 115),
       ),
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
-      home: ChatList(), //เอาชื่อคลาสมาใส่
+      // home: ,
+      home: LoginPage(), //เอาชื่อคลาสมาใส่
     );
   }
 }
