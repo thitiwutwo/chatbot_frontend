@@ -103,6 +103,29 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 60,
                   ),
                   TextFormField(
+                      controller: name,
+                      validator:
+                          // RequiredValidator(errorText: 'กรุณากรอกอีเมล์'),
+                          MultiValidator([
+                        RequiredValidator(errorText: 'กรุณากรอกชื่อนาม-สกุล'),
+                        // EmailValidator(errorText: 'กรุณากรอกอีเมล์ให้ถูกต้อง')
+                      ]),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
+                          labelText: 'Name',
+                          border: OutlineInputBorder())),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
                       controller: email,
                       validator:
                           // RequiredValidator(errorText: 'กรุณากรอกอีเมล์'),
@@ -222,10 +245,19 @@ class _RegisterPageState extends State<RegisterPage> {
                         primary: Color.fromARGB(255, 255, 255, 255),
                       ),
                       onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegisterPage()));
+                        if (formKey.currentState!.validate()) {
+                          // print("validate");
+                          postTodo();
+                          setState(() {
+                            setUsername(email.text);
+                            setPassword(password.text);
+                            print("${email.text} and ${password.text}");
+                            // FirebaseAuth.instance
+                            //     .createUserWithEmailAndPassword(
+                            //         email: email.text, password: password.text);
+                            // setStatus('Login successful');
+                          });
+                        }
                       },
                       child: Text(
                         "ลงทะเบียน",
