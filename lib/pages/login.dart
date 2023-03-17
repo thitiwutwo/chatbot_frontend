@@ -1,4 +1,5 @@
 import 'package:chatbot_frontend/pages/register.dart';
+import 'package:chatbot_frontend/pages/register.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/model/profile.dart';
@@ -51,22 +52,43 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("เข้าสู่ระบบ"),
-      ),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 251, 252, 252),
+              Color.fromARGB(255, 19, 175, 136)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Form(
             key: formKey,
-            child: SingleChildScrollView(
+            child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Text(
                   //   "Email",
                   //   style: TextStyle(fontSize: 20),
                   // ),
+                  Center(
+                    child: Text(
+                      "Sign In",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 60,
+                  ),
                   TextFormField(
                       controller: email,
                       validator:
@@ -77,7 +99,16 @@ class _LoginPageState extends State<LoginPage> {
                       ]),
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                          labelText: 'Email', border: OutlineInputBorder())),
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
+                          labelText: 'Email',
+                          border: OutlineInputBorder())),
                   SizedBox(
                     height: 15,
                   ),
@@ -91,6 +122,14 @@ class _LoginPageState extends State<LoginPage> {
                           RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
                       obscureText: _isObscured,
                       decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
                           suffixIcon: IconButton(
                             padding:
                                 const EdgeInsetsDirectional.only(end: 12.0),
@@ -111,6 +150,12 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        primary: Color.fromARGB(255, 255, 255, 255),
+                      ),
                       onPressed: () {
                         // formKey.currentState.save();
                         if (formKey.currentState!.validate()) {
@@ -126,7 +171,9 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         "เข้าสู่ระบบ",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 19, 175, 136)),
                       ),
                     ),
                   ),
@@ -136,6 +183,12 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        primary: Color.fromARGB(255, 255, 255, 255),
+                      ),
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -144,7 +197,9 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: Text(
                         "ลงทะเบียน",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 19, 175, 136)),
                       ),
                     ),
                   ),

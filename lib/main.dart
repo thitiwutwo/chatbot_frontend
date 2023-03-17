@@ -9,6 +9,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chatbot_frontend/pages/register.dart';
 import 'package:chatbot_frontend/pages/login.dart';
+
 // import 'package:chatbot_frontend/test.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
       // home: ,
-      home: LoginPage(), //เอาชื่อคลาสมาใส่
+      // home: LoginPage(), //เอาชื่อคลาสมาใส่
+      home: LoginPage(),
     );
   }
 }

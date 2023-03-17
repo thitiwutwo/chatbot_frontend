@@ -27,6 +27,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   TextEditingController name = TextEditingController();
   String created = "";
   String modified = "";
@@ -35,6 +36,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
   var _isObscured;
+  var _isObscured2;
 
   RegExp pass_valid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
   bool validatePassword(String pass) {
@@ -50,6 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void initState() {
     super.initState();
     _isObscured = true;
+    _isObscured2 = true;
   }
 
   @override
@@ -62,31 +65,42 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("สร้างบัญชีผู้ใช้"),
-      ),
       body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 251, 252, 252),
+              Color.fromARGB(255, 19, 175, 136)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Form(
             key: formKey,
-            child: SingleChildScrollView(
+            child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Text(
                   //   "Email",
                   //   style: TextStyle(fontSize: 20),
                   // ),
-                  TextFormField(
-                      controller: name,
-                      validator:
-                          RequiredValidator(errorText: 'กรุณากรอกชื่อ-นามสกุล'),
-                      // obscureText: true,
-                      decoration: InputDecoration(
-                          labelText: 'Name', border: OutlineInputBorder())),
+                  Center(
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                   SizedBox(
-                    height: 15,
+                    height: 60,
                   ),
                   TextFormField(
                       controller: email,
@@ -98,7 +112,16 @@ class _RegisterPageState extends State<RegisterPage> {
                       ]),
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                          labelText: 'Email', border: OutlineInputBorder())),
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
+                          labelText: 'Email',
+                          border: OutlineInputBorder())),
                   SizedBox(
                     height: 15,
                   ),
@@ -124,6 +147,14 @@ class _RegisterPageState extends State<RegisterPage> {
                       },
                       obscureText: _isObscured,
                       decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
                           suffixIcon: IconButton(
                             padding:
                                 const EdgeInsetsDirectional.only(end: 12.0),
@@ -141,9 +172,81 @@ class _RegisterPageState extends State<RegisterPage> {
                   SizedBox(
                     height: 15,
                   ),
+                  // Text(
+                  //   "Password",
+                  //   style: TextStyle(fontSize: 20),
+                  // ),
+                  TextFormField(
+                      controller: confirmPassword,
+                      validator: (confirmPassword) {
+                        if (confirmPassword != password.text) {
+                          return 'รหัสผ่านไม่ตรงกัน';
+                        } else {
+                          return null;
+                        }
+                      },
+                      obscureText: _isObscured2,
+                      decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 255, 255, 255),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                width: 3,
+                                color: Color.fromARGB(
+                                    255, 255, 255, 255)), //<-- SEE HERE
+                          ),
+                          suffixIcon: IconButton(
+                            padding:
+                                const EdgeInsetsDirectional.only(end: 12.0),
+                            icon: _isObscured2
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured2 = !_isObscured2;
+                              });
+                            },
+                          ),
+                          labelText: 'Confirm Password',
+                          border: OutlineInputBorder())),
+                  SizedBox(
+                    height: 15,
+                  ),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        primary: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => RegisterPage()));
+                      },
+                      child: Text(
+                        "ลงทะเบียน",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 19, 175, 136)),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        primary: Color.fromARGB(255, 255, 255, 255),
+                      ),
                       onPressed: () {
                         // formKey.currentState.save();
                         if (formKey.currentState!.validate()) {
@@ -152,19 +255,23 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() {
                             setUsername(email.text);
                             setPassword(password.text);
-                            setPassword(name.text);
-                            print(
-                                "${email.text} and ${password.text} and ${name.text}");
+                            print("${email.text} and ${password.text}");
                             // FirebaseAuth.instance
                             //     .createUserWithEmailAndPassword(
                             //         email: email.text, password: password.text);
                             // setStatus('Login successful');
                           });
                         }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()));
                       },
                       child: Text(
-                        "ลงทะเบียน",
-                        style: TextStyle(fontSize: 20),
+                        "เข้าสู่ระบบ",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Color.fromARGB(255, 19, 175, 136)),
                       ),
                     ),
                   ),
@@ -175,109 +282,6 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-    // ---------------------------------------------------------------------------------------------------------------------------------
-    // return FutureBuilder(
-    //     future: firebase,
-    //     builder: (context, snapshot) {
-    //       if (snapshot.hasError) {
-    //         return Scaffold(
-    //           appBar: AppBar(
-    //             title: Text("Error"),
-    //           ),
-    //           body: Center(
-    //             child: Text("${snapshot.error}"),
-    //           ),
-    //         );
-    //       }
-    //       if (snapshot.connectionState == ConnectionState.done) {
-    //         return Scaffold(
-    //           appBar: AppBar(
-    //             title: Text("สร้างบัญชีผู้ใช้"),
-    //           ),
-    //           body: Container(
-    //             child: Padding(
-    //               padding: const EdgeInsets.all(20.0),
-    //               child: Form(
-    //                 key: formKey,
-    //                 child: SingleChildScrollView(
-    //                   child: Column(
-    //                     crossAxisAlignment: CrossAxisAlignment.start,
-    //                     children: [
-    //                       // Text(
-    //                       //   "Email",
-    //                       //   style: TextStyle(fontSize: 20),
-    //                       // ),
-    //                       TextFormField(
-    //                           controller: email,
-    //                           validator:
-    //                               // RequiredValidator(errorText: 'กรุณากรอกอีเมล์'),
-    //                               MultiValidator([
-    //                             RequiredValidator(errorText: 'กรุณากรอกอีเมล์'),
-    //                             EmailValidator(
-    //                                 errorText: 'กรุณากรอกอีเมล์ให้ถูกต้อง')
-    //                           ]),
-    //                           keyboardType: TextInputType.emailAddress,
-    //                           decoration: InputDecoration(
-    //                               labelText: 'Email',
-    //                               border: OutlineInputBorder())),
-    //                       SizedBox(
-    //                         height: 15,
-    //                       ),
-    //                       // Text(
-    //                       //   "Password",
-    //                       //   style: TextStyle(fontSize: 20),
-    //                       // ),
-    //                       TextFormField(
-    //                           controller: password,
-    //                           validator: RequiredValidator(
-    //                               errorText: 'กรุณากรอกรหัสผ่าน'),
-    //                           obscureText: true,
-    //                           decoration: InputDecoration(
-    //                               labelText: 'Password',
-    //                               border: OutlineInputBorder())),
-    //                       SizedBox(
-    //                         height: 15,
-    //                       ),
-    //                       SizedBox(
-    //                         width: double.infinity,
-    //                         child: ElevatedButton(
-    //                           onPressed: () {
-    //                             // formKey.currentState.save();
-    //                             if (formKey.currentState!.validate()) {
-    //                               // print("validate");
-    //                               setState(() {
-    //                                 setUsername(email.text);
-    //                                 setPassword(password.text);
-    //                                 // print("${email.text} and ${password.text}");
-    //                                 FirebaseAuth.instance
-    //                                     .createUserWithEmailAndPassword(
-    //                                         email: email.text,
-    //                                         password: password.text);
-    //                                 // setStatus('Login successful');
-    //                               });
-    //                             }
-    //                           },
-    //                           child: Text(
-    //                             "ลงทะเบียน",
-    //                             style: TextStyle(fontSize: 20),
-    //                           ),
-    //                         ),
-    //                       ),
-    //                     ],
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         );
-    //       }
-    //       return Scaffold(
-    //         body: Center(
-    //           child: CircularProgressIndicator(),
-    //         ),
-    //       );
-    //     });
-    //
   }
 
   Future<void> setUsername(textEmail) async {
