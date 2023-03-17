@@ -44,8 +44,6 @@ dependencies:
   dio: ^3.0.10
   shared_preferences: ^2.0.18
   form_field_validator: ^1.1.0
-  firebase_core: ^2.8.0
-  firebase_auth: ^0.6.2+1
   email_validator: ^2.1.17
 
 dev_dependencies:

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/model/profile.dart';
-import 'dart:html';
 import 'package:flutter/src/animation/animation_controller.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -8,10 +7,12 @@ import 'package:flutter/src/widgets/ticker_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 // import 'package:email_validator/email_validator.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 
@@ -32,7 +33,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool is_deleted = false;
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -248,21 +248,18 @@ class _RegisterPageState extends State<RegisterPage> {
   Future postTodo() async {
     //http://10.80.25.48:8000/api/post-todolist
     print("${email.text} or ${password.text}");
-    var url = Uri.http('127.0.0.1:8000', '/api/post-user/');
-
-    //ประเภทของ Data ที่เราจะส่งไป เป็นแบบ json
-    //header ของ PO ST request
-
-    Map<String, String> header = {"Content-type": "application/json"};
-    //Data ที่จะส่ง
-    //String jsondata = '{"title":"AAA", "detail": "BBB"}';
-    // String jsondata = '{"title":"${email.text}", "detail":"${password.text}"}';
-    String jsondata =
-        '{"name": "${name.text}","email": "${email.text}","password": "${password.text}"}';
-
-    //เป็นการ Response ค่าแบบ POST
-    var response = await http.post(url, headers: header, body: jsondata);
-    print('------result-------');
-    print(response.body);
+    final Dio dio = Dio();
+    final baseUrl = dotenv.env['Url'];
+    final response = await dio.post('$baseUrl/api/post-user/', data:{
+      "name" : name.text,
+      "email": email.text,
+      "password": password.text,
+      "is_admin": false
+    });
+    print(response);
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      Navigator.pop(context);
+    }
   }
 }

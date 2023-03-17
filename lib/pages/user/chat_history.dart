@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert';
+import 'package:chatbot_frontend/pages/login.dart';
 
 class ChatHistory extends StatefulWidget {
   @override
@@ -13,7 +14,13 @@ class ChatHistory extends StatefulWidget {
 
 class _ChatHistoryState extends State<ChatHistory> {
   // You can customize the data for your chat list here
-  
+  bool _isDropdownOpen = false;
+
+  void _toggleDropdown() {
+    setState(() {
+      _isDropdownOpen = !_isDropdownOpen;
+    });
+  }
   List chatHistory = [];
   void initState() {
     // TODO: implement initState
@@ -42,7 +49,9 @@ class _ChatHistoryState extends State<ChatHistory> {
             onPressed: () async {
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('channel_id');
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatbotPage()));
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatbotPage())).then((value) => {
+                            getList()
+                          });
             },
             child: const Center(
               child: Text('สร้างข้อความใหม่', style: TextStyle(fontWeight: FontWeight.bold),),
@@ -56,13 +65,45 @@ class _ChatHistoryState extends State<ChatHistory> {
         backgroundColor: Color.fromARGB(255, 255, 255, 255),
         title: Text("ข้อความ",style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         actions: <Widget>[
-          Container(
-            margin: EdgeInsets.only(right:20),
-            child: IconButton(
-              icon:const Icon(Icons.account_circle_rounded,color: Colors.black, size: 40,), onPressed: () {  },
-            ),
-          )
+          // Container(
+          //   margin: EdgeInsets.only(right:20),
+          //   child: IconButton(
+          //     icon:const Icon(Icons.account_circle_rounded,color: Colors.black, size: 40,), onPressed: (){
+                
+          //     }
+          //   ),
+          // ),
+          Padding(
+            padding: const EdgeInsets.only(right:10.0),
+            child: PopupMenuButton(
+              icon: Icon(Icons.account_circle_rounded,color: Colors.black, size: 40,),
+              
+              itemBuilder: (BuildContext context) => [
+                PopupMenuItem(
+                  child: Row(
+                      children: [
+                        Icon(Icons.exit_to_app,color: Colors.black), // add the icon widget
+                        SizedBox(width: 5), // add some space between the icon and the text
+                        Text("Logout"),
+                      ],
+                    ),
+                  value: "logout",
+                ),
+                
+              ],
+                onSelected: (value) {
+                  if (value == "logout") {
+                    // Handle logout action here
+                    clearPrefs();
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+          ),
+          
         ],
+        
+        
       ),
       body: Column(
         children: [
@@ -134,7 +175,9 @@ class _ChatHistoryState extends State<ChatHistory> {
                           onTap: () async {
                             final prefs = await SharedPreferences.getInstance();
                             await prefs.setInt('channel_id', chatHistory[index]['id']);
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatbotPage()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatbotPage())).then((value) => {
+                              getList()
+                            });
                             // Handle chat tile press here
                           },
                         ),
@@ -152,9 +195,11 @@ class _ChatHistoryState extends State<ChatHistory> {
   }
   Future getList() async{
     try{
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final int? user_id = prefs.getInt('user_id');
       final Dio dio = Dio();
       final baseUrl = dotenv.env['Url'];
-      final response = await dio.get('$baseUrl/api/get-channel/');
+      final response = await dio.get('$baseUrl/api/get-channel/user/$user_id');
       
       if(response.statusCode == 200){
         List<dynamic> dataJson = response.data;
@@ -184,5 +229,9 @@ class _ChatHistoryState extends State<ChatHistory> {
     }catch(e){
       print(e.toString());
     }
+  }
+  void clearPrefs() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
   }
 }

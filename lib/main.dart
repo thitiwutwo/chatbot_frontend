@@ -7,13 +7,11 @@ import 'package:chatbot_frontend/pages/user/chat_history.dart';
 import 'package:chatbot_frontend/test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-void main() async {
-  await dotenv.load(fileName: ".env");
 import 'package:chatbot_frontend/pages/register.dart';
 import 'package:chatbot_frontend/pages/login.dart';
-
 // import 'package:chatbot_frontend/test.dart';
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 

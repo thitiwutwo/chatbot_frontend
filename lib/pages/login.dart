@@ -2,7 +2,6 @@ import 'package:chatbot_frontend/pages/register.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/model/profile.dart';
-import 'dart:html';
 import 'package:flutter/src/animation/animation_controller.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -10,11 +9,13 @@ import 'package:flutter/src/widgets/ticker_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:chatbot_frontend/pages/user/chat_history.dart';
+
 
 class LoginPage extends StatefulWidget {
   // const LoginPage({Key? key}) : super(key: key);
@@ -33,7 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   // bool is_deleted = false;
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
 
   @override
   Widget build(BuildContext context) {
@@ -94,10 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                             setUsername(email.text);
                             setPassword(password.text);
                             print("${email.text} and ${password.text}");
-                            // FirebaseAuth.instance
-                            //     .createUserWithEmailAndPassword(
-                            //         email: email.text, password: password.text);
-                            // setStatus('Login successful');
+                           
                           });
                         }
                       },
@@ -146,30 +143,22 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> getData() async {
     print("${email.text} or ${password.text}");
-    var url = Uri.http('127.0.0.1:8000', '/api/login');
-
+    // var url = Uri.http('127.0.0.1:8000', '/api/login');
+    final Dio dio = Dio();
+    final baseUrl = dotenv.env['Url'];
+    final response = await dio.post('$baseUrl/api/login', data:{
+      "email": email.text,
+      "password": password.text
+    });
     //ประเภทของ Data ที่เราจะส่งไป เป็นแบบ json
     //header ของ PO ST request
-
-    Map<String, String> header = {"Content-type": "application/json"};
-    //Data ที่จะส่ง
-    //String jsondata = '{"title":"AAA", "detail": "BBB"}';
-    // String jsondata = '{"title":"${email.text}", "detail":"${password.text}"}';
-    String jsondata =
-        // '{"email": "${email.text}","password": "${password.text}"}';
-        '{"email": "${email.text}","password": "${password.text}"}';
-
-    //เป็นการ Response ค่าแบบ POST
-    var response = await http.post(url, headers: header, body: jsondata);
-    String CheckUser = response.body;
-    if (CheckUser == '{"is_login":true}') {
-      print('------result-------');
-      print(response.body);
+    if (response.data['is_login']){
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('user_id', response.data['id']);
       print('success');
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => RegisterPage()));
+          context, MaterialPageRoute(builder: (context) => ChatHistory()));
     } else {
-      print('fucking good');
       normalDialog(context, 'กรุณากรอกอีเมล์หรือรหัสผ่านให้ถูกต้อง');
     }
     // print("getData");

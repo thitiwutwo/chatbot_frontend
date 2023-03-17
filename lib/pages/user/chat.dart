@@ -315,11 +315,13 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
   void addChannel(String text) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final int? user_id = prefs.getInt('user_id');
     final Dio dio = Dio();
     final baseUrl = dotenv.env['Url'];
     final response = await dio.post('$baseUrl/api/create-channel', data: {
       "name" : text,
-      "sender_id": 1,
+      "sender_id": user_id,
     });
     if(response.statusCode == 200){
       final prefs = await SharedPreferences.getInstance();
@@ -332,17 +334,18 @@ class _ChatbotPageState extends State<ChatbotPage> {
   void addMessage(String text, DateTime date,{String file_url = '' , bool is_user = false}) async{
     final prefs = await SharedPreferences.getInstance();
     final int? channel_id = prefs.getInt('channel_id');
+    final int? user_id = prefs.getInt('user_id');
     final Dio dio = Dio();
     final baseUrl = dotenv.env['Url'];
     final response = await dio.post('$baseUrl/api/create-chat', data: {
         "text" : text,
-        "sender_id" : 1,
+        "sender_id" : user_id,
         "is_user" : is_user,
         "channel" : channel_id,
         "file_url" : file_url
     });
     
-    print(response.data);
+    // print(response.data);
   }
 
   void sendMessage() async {
@@ -379,7 +382,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
       Dialogflow dialogflow =
           Dialogflow(authGoogle: authGoogle, language: Language.thai);
       final response = await dialogflow.detectIntent(text);
-      print(response.queryResult.intent.displayName);
+      // print(response.queryResult.intent.displayName);
       final message = response.queryResult.fulfillmentText;
 
       final file = await getFile(response.queryResult.intent.displayName);
