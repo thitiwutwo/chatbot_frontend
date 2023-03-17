@@ -34,6 +34,20 @@ class _LoginPageState extends State<LoginPage> {
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  var _isObscured;
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = true;
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +90,22 @@ class _LoginPageState extends State<LoginPage> {
                       controller: password,
                       validator:
                           RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                      obscureText: true,
+                      obscureText: _isObscured,
                       decoration: InputDecoration(
-                          labelText: 'Password', border: OutlineInputBorder())),
+                          suffixIcon: IconButton(
+                            padding:
+                                const EdgeInsetsDirectional.only(end: 12.0),
+                            icon: _isObscured
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured = !_isObscured;
+                              });
+                            },
+                          ),
+                          labelText: 'Password',
+                          border: OutlineInputBorder())),
                   SizedBox(
                     height: 15,
                   ),
@@ -169,29 +196,9 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => RegisterPage()));
     } else {
-      print('fucking good');
+      // print('fucking good');
       normalDialog(context, 'กรุณากรอกอีเมล์หรือรหัสผ่านให้ถูกต้อง');
     }
-    // print("getData");
-    // try {
-    //   final Dio dio = Dio();
-    //   final String baseUrl = 'http://127.0.0.1:8000/api/';
-    //   final response = await dio.get('$baseUrl/login');
-    //   print("try");
-    //   if (response.statusCode == 200) {
-    //     List<dynamic> dataJson = response.data;
-    //     setState(() {
-    //       // data = dataJson.map((json) => ChartData.fromJson(json)).toList();
-    //     });
-    //     print("if");
-    //   } else {
-    //     print("else");
-    //     throw Exception('Failed to fetch data');
-    //   }
-    // } catch (e) {
-    //   print("catch");
-    //   print(e.toString());
-    // }
   }
 
   Future<Null> normalDialog(BuildContext context, String message) async {

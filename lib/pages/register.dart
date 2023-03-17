@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/model/profile.dart';
+import 'package:chatbot_frontend/pages/login.dart';
 import 'dart:html';
 import 'package:flutter/src/animation/animation_controller.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -33,6 +34,30 @@ class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
+  var _isObscured;
+
+  RegExp pass_valid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
+  bool validatePassword(String pass) {
+    String password = pass.trim();
+    if (pass_valid.hasMatch(password)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = true;
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +108,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   // ),
                   TextFormField(
                       controller: password,
-                      validator:
-                          RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                      obscureText: true,
+                      validator: (password) {
+                        if (password!.isEmpty) {
+                          RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน');
+                        } else if (password.length < 6) {
+                          return 'กรุณากรอกรหัสผ่านอย่างน้อย 6 ตัว';
+                        } else {
+                          bool result = validatePassword(password);
+                          if (result) {
+                            return null;
+                          } else {
+                            return "กรุณากรอกรหัสผ่านให้มีตัวเลข ตัวอักษรพิเศษ และตัวอักษรใหญ่";
+                          }
+                        }
+                      },
+                      obscureText: _isObscured,
                       decoration: InputDecoration(
-                          labelText: 'Password', border: OutlineInputBorder())),
+                          suffixIcon: IconButton(
+                            padding:
+                                const EdgeInsetsDirectional.only(end: 12.0),
+                            icon: _isObscured
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured = !_isObscured;
+                              });
+                            },
+                          ),
+                          labelText: 'Password',
+                          border: OutlineInputBorder())),
                   SizedBox(
                     height: 15,
                   ),
@@ -246,9 +296,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future postTodo() async {
-    //http://10.80.25.48:8000/api/post-todolist
     print("${email.text} or ${password.text}");
-    var url = Uri.http('127.0.0.1:8000', '/api/post-user/');
+    var url = Uri.http('127.0.0.1:8000', '/api/CheckRegister');
 
     //ประเภทของ Data ที่เราจะส่งไป เป็นแบบ json
     //header ของ PO ST request
@@ -258,11 +307,47 @@ class _RegisterPageState extends State<RegisterPage> {
     //String jsondata = '{"title":"AAA", "detail": "BBB"}';
     // String jsondata = '{"title":"${email.text}", "detail":"${password.text}"}';
     String jsondata =
-        '{"name": "${name.text}","email": "${email.text}","password": "${password.text}"}';
+        // '{"email": "${email.text}","password": "${password.text}"}';
+        '{"email": "${email.text}"}';
 
     //เป็นการ Response ค่าแบบ POST
     var response = await http.post(url, headers: header, body: jsondata);
-    print('------result-------');
-    print(response.body);
+    String CheckUser = response.body;
+    if (CheckUser == '{"is_login":true}') {
+      print('------result-------');
+      print(response.body);
+      print('success');
+      normalDialog(context, 'อีเมลนี้มีผู้ใช้งานแล้ว');
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => RegisterPage()));
+    } else {
+      // print('fucking good');
+      // print(response.body);
+      var url = Uri.http('127.0.0.1:8000', '/api/post-user/');
+      Map<String, String> header = {"Content-type": "application/json"};
+      String jsondata =
+          '{"name": "${name.text}","email": "${email.text}","password": "${password.text}"}';
+      var response = await http.post(url, headers: header, body: jsondata);
+      print('------result-------');
+      print(response.body);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      // normalDialog(context, 'กรุณากรอกอีเมล์หรือรหัสผ่านให้ถูกต้อง');
+    }
+  }
+
+  Future<Null> normalDialog(BuildContext context, String message) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(message),
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
