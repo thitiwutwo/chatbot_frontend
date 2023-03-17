@@ -9,6 +9,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
+import 'package:chatbot_frontend/pages/register.dart';
+import 'package:chatbot_frontend/pages/login.dart';
+
+// import 'package:chatbot_frontend/test.dart';
+void main() {
   runApp(MyApp());
 }
 
@@ -19,11 +24,12 @@ class MyApp extends StatelessWidget {
       title: 'main',
       theme: new ThemeData(
         fontFamily: 'Inter',
-        primaryColor: Color.fromARGB(255,0, 154, 115),
+        primaryColor: Color.fromARGB(255, 0, 154, 115),
       ),
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
-      home: ChatHistory(), //เอาชื่อคลาสมาใส่
+      // home: ,
+      home: LoginPage(), //เอาชื่อคลาสมาใส่
     );
   }
 }
