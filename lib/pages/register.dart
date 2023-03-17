@@ -304,9 +304,8 @@ class _RegisterPageState extends State<RegisterPage> {
       "password": password.text,
       "is_admin": false
     });
-    if (response.is_login) {
+    if (response.data.is_login) {
       print('------result-------');
-      print(response.body);
       print('success');
       normalDialog(context, 'อีเมลนี้มีผู้ใช้งานแล้ว');
       // Navigator.push(
@@ -323,7 +322,6 @@ class _RegisterPageState extends State<RegisterPage> {
         "is_admin": false
       });
       print('------result-------');
-      print(response.body);
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
       // normalDialog(context, 'กรุณากรอกอีเมล์หรือรหัสผ่านให้ถูกต้อง');

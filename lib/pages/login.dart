@@ -33,7 +33,6 @@ class _LoginPageState extends State<LoginPage> {
   // bool is_deleted = false;
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
-  final Future<FirebaseApp> firebase = Firebase.initializeApp();
   var _isObscured;
 
   @override
