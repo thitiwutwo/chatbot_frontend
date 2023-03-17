@@ -5,6 +5,7 @@ import 'package:chatbot_frontend/pages/user/test_chat_list.dart';
 import 'package:chatbot_frontend/pages/user/chat.dart';
 import 'package:chatbot_frontend/pages/register.dart';
 import 'package:chatbot_frontend/pages/login.dart';
+// import 'package:chatbot_frontend/pages/Newlogin.dart';
 
 // import 'package:chatbot_frontend/test.dart';
 void main() {
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
       // home: ,
-      home: LoginPage(), //เอาชื่อคลาสมาใส่
+      // home: LoginPage(), //เอาชื่อคลาสมาใส่
+      home: LoginPage(),
     );
   }
 }
