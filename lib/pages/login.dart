@@ -184,29 +184,49 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                  Row(
+                    children: <Widget>[
+                      const Text('Already have an account?'),
+                      TextButton(
+                        child: const Text(
+                          'Sign up',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 255, 255, 255)),
                         ),
-                        primary: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegisterPage()));
-                      },
-                      child: Text(
-                        "ลงทะเบียน",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Color.fromARGB(255, 19, 175, 136)),
-                      ),
-                    ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RegisterPage()));
+                        },
+                      )
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
                   ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(30.0),
+                  //       ),
+                  //       primary: Color.fromARGB(255, 255, 255, 255),
+                  //     ),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => RegisterPage()));
+                  //     },
+                  //     child: Text(
+                  //       "ลงทะเบียน",
+                  //       style: TextStyle(
+                  //           fontSize: 20,
+                  //           color: Color.fromARGB(255, 19, 175, 136)),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

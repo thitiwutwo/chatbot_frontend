@@ -238,43 +238,63 @@ class _RegisterPageState extends State<RegisterPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
+                  Row(
+                    children: <Widget>[
+                      const Text('Already have an account?'),
+                      TextButton(
+                        child: const Text(
+                          'Sign in',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 255, 255, 255)),
                         ),
-                        primary: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      onPressed: () {
-                        // formKey.currentState.save();
-                        if (formKey.currentState!.validate()) {
-                          // print("validate");
-                          postTodo();
-                          setState(() {
-                            setUsername(email.text);
-                            setPassword(password.text);
-                            print("${email.text} and ${password.text}");
-                            // FirebaseAuth.instance
-                            //     .createUserWithEmailAndPassword(
-                            //         email: email.text, password: password.text);
-                            // setStatus('Login successful');
-                          });
-                        }
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => LoginPage()));
-                      },
-                      child: Text(
-                        "เข้าสู่ระบบ",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Color.fromARGB(255, 19, 175, 136)),
-                      ),
-                    ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LoginPage()));
+                        },
+                      )
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
                   ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(30.0),
+                  //       ),
+                  //       primary: Color.fromARGB(255, 255, 255, 255),
+                  //     ),
+                  //     onPressed: () {
+                  //       // formKey.currentState.save();
+                  //       if (formKey.currentState!.validate()) {
+                  //         // print("validate");
+                  //         postTodo();
+                  //         setState(() {
+                  //           setUsername(email.text);
+                  //           setPassword(password.text);
+                  //           print("${email.text} and ${password.text}");
+                  //           // FirebaseAuth.instance
+                  //           //     .createUserWithEmailAndPassword(
+                  //           //         email: email.text, password: password.text);
+                  //           // setStatus('Login successful');
+                  //         });
+                  //       }
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => LoginPage()));
+                  //     },
+                  //     child: Text(
+                  //       "เข้าสู่ระบบ",
+                  //       style: TextStyle(
+                  //           fontSize: 20,
+                  //           color: Color.fromARGB(255, 19, 175, 136)),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
