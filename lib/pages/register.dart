@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/model/profile.dart';
+import 'package:chatbot_frontend/pages/login.dart';
 import 'package:flutter/src/animation/animation_controller.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,6 +34,30 @@ class _RegisterPageState extends State<RegisterPage> {
   bool is_deleted = false;
   final formKey = GlobalKey<FormState>();
   // Profile profile = Profile();
+  var _isObscured;
+
+  RegExp pass_valid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
+  bool validatePassword(String pass) {
+    String password = pass.trim();
+    if (pass_valid.hasMatch(password)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = true;
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +108,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   // ),
                   TextFormField(
                       controller: password,
-                      validator:
-                          RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน'),
-                      obscureText: true,
+                      validator: (password) {
+                        if (password!.isEmpty) {
+                          RequiredValidator(errorText: 'กรุณากรอกรหัสผ่าน');
+                        } else if (password.length < 6) {
+                          return 'กรุณากรอกรหัสผ่านอย่างน้อย 6 ตัว';
+                        } else {
+                          bool result = validatePassword(password);
+                          if (result) {
+                            return null;
+                          } else {
+                            return "กรุณากรอกรหัสผ่านให้มีตัวเลข ตัวอักษรพิเศษ และตัวอักษรใหญ่";
+                          }
+                        }
+                      },
+                      obscureText: _isObscured,
                       decoration: InputDecoration(
-                          labelText: 'Password', border: OutlineInputBorder())),
+                          suffixIcon: IconButton(
+                            padding:
+                                const EdgeInsetsDirectional.only(end: 12.0),
+                            icon: _isObscured
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured = !_isObscured;
+                              });
+                            },
+                          ),
+                          labelText: 'Password',
+                          border: OutlineInputBorder())),
                   SizedBox(
                     height: 15,
                   ),
@@ -246,20 +296,52 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future postTodo() async {
-    //http://10.80.25.48:8000/api/post-todolist
     print("${email.text} or ${password.text}");
     final Dio dio = Dio();
     final baseUrl = dotenv.env['Url'];
-    final response = await dio.post('$baseUrl/api/post-user/', data:{
-      "name" : name.text,
+    final response = await dio.post('$baseUrl/api/login', data:{
       "email": email.text,
       "password": password.text,
       "is_admin": false
     });
-    print(response);
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      Navigator.pop(context);
+    if (response.is_login) {
+      print('------result-------');
+      print(response.body);
+      print('success');
+      normalDialog(context, 'อีเมลนี้มีผู้ใช้งานแล้ว');
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => RegisterPage()));
+    } else {
+      // print('fucking good');
+      // print(response.body);
+      final Dio dio = Dio();
+      final baseUrl = dotenv.env['Url'];
+      final response = await dio.post('$baseUrl/api/post-user/', data:{
+        "name" : name.text,
+        "email": email.text,
+        "password": password.text,
+        "is_admin": false
+      });
+      print('------result-------');
+      print(response.body);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
+      // normalDialog(context, 'กรุณากรอกอีเมล์หรือรหัสผ่านให้ถูกต้อง');
     }
+  }
+
+  Future<Null> normalDialog(BuildContext context, String message) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(message),
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 }
