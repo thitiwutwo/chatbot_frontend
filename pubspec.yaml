@@ -40,6 +40,9 @@ dependencies:
   intl: ^0.18.0
   url_launcher: ^6.1.10
   cool_alert: ^1.1.0
+  flutter_dotenv: ^5.0.2
+  shared_preferences: ^2.0.18
+  dio: ^3.0.10
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +70,7 @@ flutter:
   assets:
     - assets/credentials/credentials.json
     - assets/credentials/admin_credentials.json
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dialogflow/dialogflow_v2.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ChatMessage {
   String text;
   String sender;
@@ -19,24 +20,19 @@ class ChatbotPage extends StatefulWidget {
   _ChatbotPageState createState() => _ChatbotPageState();
 }
 
+
 class _ChatbotPageState extends State<ChatbotPage> {
-  List<ChatMessage> messages = [
-          // ChatMessage(
-          //   text: 'สวัสดี',
-          //   sender: 'Bot',
-            
-          //   time: DateTime.now(),
-          // ),
-          // ChatMessage(
-          //   text: 'สวัสดี',
-          //   sender: 'Me',
-          //   isUser: true,
-          //   time: DateTime.now(),
-          // ),
-          ];
+  List<ChatMessage> messages = [];
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getChatHistory();
+    
+  }
+  
   List faq = ['ทำอะไรได้บ้าง', 'ขอเอกสารลา', 'ขอเอกสารลาออก', 'ขอเอกสารเบิกเงิน', 'ขอเอกสารทำงานล่วงเวลา'];
   TextEditingController _controller = TextEditingController();
-  
+  final regex_image = RegExp(r'\.(jpeg|jpg|png|gif)$', caseSensitive: false);
   bool isLoading = false;
   ButtonStyle styleBtn = ElevatedButton.styleFrom(
     primary: Color.fromARGB(255,0, 154, 115),
@@ -48,6 +44,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: const BackButton(
+          color: Colors.black, // <-- SEE HERE
+        ),
         centerTitle: true,
         elevation: 0,
         title: Text('ข้อความ', style: TextStyle(color: Colors.black, fontSize: 30.0, fontWeight: FontWeight.bold),),
@@ -106,7 +105,40 @@ class _ChatbotPageState extends State<ChatbotPage> {
                               ),
                               padding:
                                   EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                              child: InkWell(
+                              child: 
+                                regex_image.hasMatch(message.file_url) ?
+                                InkWell(
+                                borderRadius: BorderRadius.circular(20.0),
+                                onTap: () { showDialog(
+                                    context: context,
+                                    builder: (_) => Dialog(
+                                      child: Container(
+                                        width: 180,
+                                        height: 300,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(message.file_url),
+                                            fit: BoxFit.contain
+                                          )
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  crossAxisAlignment: message.isUser
+                                      ? CrossAxisAlignment.end
+                                      : CrossAxisAlignment.start,
+                                  children: [
+        
+                                    SizedBox(height: 3.0),
+                                    
+                                    Image.network(message.file_url, width: 150, height: 180,),
+                                    
+                                  ],
+                                ),
+                              ):
+                                InkWell(
                                 borderRadius: BorderRadius.circular(20.0),
                                 onTap: message.file_url == '' ? () {
                                   showDialog(
@@ -118,7 +150,11 @@ class _ChatbotPageState extends State<ChatbotPage> {
                                       content: Text(message.text),
                                     ),
                                   ); 
-                                }: () => {launch(message.file_url)},
+                                }: () => {
+                                    if(!regex_image.hasMatch(message.file_url)){
+                                      launch(message.file_url)
+                                    }
+                                  },
                                 child: Column(
                                   crossAxisAlignment: message.isUser
                                       ? CrossAxisAlignment.end
@@ -133,6 +169,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                                     //     ),
                                     //   ),
                                     SizedBox(height: 3.0),
+                                    
                                     Text(
                                       message.text,
                                       style: TextStyle(
@@ -227,21 +264,95 @@ class _ChatbotPageState extends State<ChatbotPage> {
     );
   }
 
-  Future getFile(var intent) async{
-    var url = Uri.http('localhost:8000','/api/get-file/${intent}');
-    var response = await http.get(url);
-    var result = utf8.decode(response.bodyBytes);
-    if(response.statusCode == 200){
-      return jsonDecode(result);
-    }else{
-      return;
+  Future getChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final int? channel_id = prefs.getInt('channel_id');
+    try{
+      final Dio dio = Dio();
+      final baseUrl = dotenv.env['Url'];
+      final response = await dio.get('$baseUrl/api/get-chat/${channel_id}');
+      if(response.statusCode == 200){
+        List<dynamic> dataJson = response.data;
+        var chats = dataJson;
+        for(var message in chats){
+          setState(() {
+            messages.add(
+              ChatMessage(
+                text: message['text'],
+                sender: message['sender_id'] == 0 ? 'bot' : 'user',
+                isUser: message['is_user'],
+                time: DateTime.parse(message['datetime']),
+                file_url: message['file_url'] ?? '',
+              ),
+            );
+            
+          });
+        }
+      }else{
+          throw Exception('Failed to fetch data');
+        }
+    }catch(e){
+      print(e.toString());
     }
   }
 
+  Future getFile(var intent) async{
+    try{
+      final Dio dio = Dio();
+      final baseUrl = dotenv.env['Url'];
+      final response = await dio.get('$baseUrl/api/get-file/$intent');
+      // var result = utf8.decode(response.bodyBytes);
+      print(response);
+      if(response.statusCode == 200){
+        
+        return response.data;
+      }else{
+        throw Exception('Failed to fetch data');
+      }
+    }catch(e){
+      print(e.toString());
+    }
+  }
+
+  void addChannel(String text) async{
+    final Dio dio = Dio();
+    final baseUrl = dotenv.env['Url'];
+    final response = await dio.post('$baseUrl/api/create-channel', data: {
+      "name" : text,
+      "sender_id": 1,
+    });
+    if(response.statusCode == 200){
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('channel_id', response.data['id']);
+      addMessage(text, DateTime.now(), is_user: true);
+    }
+    
+  }
+
+  void addMessage(String text, DateTime date,{String file_url = '' , bool is_user = false}) async{
+    final prefs = await SharedPreferences.getInstance();
+    final int? channel_id = prefs.getInt('channel_id');
+    final Dio dio = Dio();
+    final baseUrl = dotenv.env['Url'];
+    final response = await dio.post('$baseUrl/api/create-chat', data: {
+        "text" : text,
+        "sender_id" : 1,
+        "is_user" : is_user,
+        "channel" : channel_id,
+        "file_url" : file_url
+    });
+    
+    print(response.data);
+  }
+
   void sendMessage() async {
+    final prefs = await SharedPreferences.getInstance();
     final text = _controller.text;
     if (text.isEmpty) {
       return;
+    }
+    if(messages.length == 0 && (prefs.getInt('channel_id') == null)){
+      addChannel(text);
     }
     setState(() {
       messages.add(
@@ -253,6 +364,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
           file_url: '',
         ),
       );
+      addMessage(text, DateTime.now(), is_user: true);
       isLoading = true;
     });
     _controller.clear();
@@ -266,13 +378,11 @@ class _ChatbotPageState extends State<ChatbotPage> {
             .build();
       Dialogflow dialogflow =
           Dialogflow(authGoogle: authGoogle, language: Language.thai);
-      print(dialogflow);
       final response = await dialogflow.detectIntent(text);
       print(response.queryResult.intent.displayName);
       final message = response.queryResult.fulfillmentText;
 
-      // await getFile(response.queryResult.intent.displayName);
-      // final file = await getFile(response.queryResult.intent.displayName);
+      final file = await getFile(response.queryResult.intent.displayName);
       setState(() {
         messages.add(
           ChatMessage(
@@ -281,22 +391,29 @@ class _ChatbotPageState extends State<ChatbotPage> {
             time: DateTime.now(),
             file_url: ''
           ),
+          
         );
+        addMessage(message, DateTime.now());
         isLoading = false;
       });
-      // if (file){
-      //     setState(() {
-      //     messages.add(
-      //       ChatMessage(
-      //         text: file["name"],
-      //         sender: 'Bot',
-      //         time: DateTime.now(),
-      //         file_url: file['file']
-      //       ),
-      //     );
-      //     isLoading = false;
-      //   });
-      // }
+      if(file != null) {
+        setState(() {
+          print('add file');
+          messages.add(
+            ChatMessage(
+              text: file["name"],
+              sender: 'Bot',
+              time: DateTime.now(),
+              file_url: file['file']
+            ),
+          );
+          isLoading = false;
+          addMessage(file["name"], DateTime.now(),file_url: file['file']);
+        });
+      }
+        
+        
+      
       
       // setState(() {
       //   messages.add(

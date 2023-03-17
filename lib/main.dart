@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 // ตัวอย่างการ import สำหรับเทสหน้าจอของตัวเอง
 import 'package:chatbot_frontend/pages/user/chat_list.dart'; // หน้า view ของตัวเอง
-import 'package:chatbot_frontend/pages/user/test_chat_list.dart';
+// import 'package:chatbot_frontend/pages/user/test_chat_list.dart';
 import 'package:chatbot_frontend/pages/user/chat.dart';
+import 'package:chatbot_frontend/pages/user/chat_history.dart';
 import 'package:chatbot_frontend/test.dart';
-void main() {
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
@@ -19,7 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       // ตัวอย่าง  สำหรับเทสหน้าจอของตัวเอง
-      home: ChatList(), //เอาชื่อคลาสมาใส่
+      home: ChatHistory(), //เอาชื่อคลาสมาใส่
     );
   }
 }

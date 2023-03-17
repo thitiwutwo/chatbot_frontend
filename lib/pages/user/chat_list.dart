@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:chatbot_frontend/pages/user/add.dart';
-
+import 'package:chatbot_frontend/pages/user/chat.dart';
 class ChatList extends StatefulWidget {
   // const ChatList({Key? key}) : super(key: key);
 
@@ -70,6 +70,10 @@ class _ChatListState extends State<ChatList> {
             margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
             child: ListTile(
               title: Text(dataListItem[index]),
+              onTap: () {
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ChatbotPage()));  // Handle chat tile press here
+                },
             ),
           ),
         );
