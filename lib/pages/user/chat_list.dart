@@ -23,7 +23,7 @@ class _ChatListState extends State<ChatList> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddPage()));
+              context, MaterialPageRoute(builder: (context) => CreateRequestPage()));
         },
         child: Icon(Icons.add),
       ),
