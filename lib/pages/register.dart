@@ -222,6 +222,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         primary: Color.fromARGB(255, 255, 255, 255),
                       ),
                       onPressed: () {
+                        postTodo();
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -251,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         // formKey.currentState.save();
                         if (formKey.currentState!.validate()) {
                           // print("validate");
-                          postTodo();
+                          
                           setState(() {
                             setUsername(email.text);
                             setPassword(password.text);
@@ -305,10 +306,9 @@ class _RegisterPageState extends State<RegisterPage> {
     final baseUrl = dotenv.env['Url'];
     final response = await dio.post('$baseUrl/api/login', data:{
       "email": email.text,
-      "password": password.text,
-      "is_admin": false
+      "password": password.text
     });
-    if (response.data.is_login) {
+    if (response.data['is_login']) {
       print('------result-------');
       print('success');
       normalDialog(context, 'อีเมลนี้มีผู้ใช้งานแล้ว');
@@ -317,8 +317,6 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       // print('fucking good');
       // print(response.body);
-      final Dio dio = Dio();
-      final baseUrl = dotenv.env['Url'];
       final response = await dio.post('$baseUrl/api/post-user/', data:{
         "name" : name.text,
         "email": email.text,

@@ -180,29 +180,29 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        primary: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RegisterPage()));
-                      },
-                      child: Text(
-                        "ลงทะเบียน",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Color.fromARGB(255, 19, 175, 136)),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: double.infinity,
+                  //   child: ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(30.0),
+                  //       ),
+                  //       primary: Color.fromARGB(255, 255, 255, 255),
+                  //     ),
+                  //     onPressed: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute(
+                  //               builder: (context) => RegisterPage()));
+                  //     },
+                  //     child: Text(
+                  //       "ลงทะเบียน",
+                  //       style: TextStyle(
+                  //           fontSize: 20,
+                  //           color: Color.fromARGB(255, 19, 175, 136)),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -235,7 +235,8 @@ class _LoginPageState extends State<LoginPage> {
     //header ของ PO ST request
     if (response.data['is_login']){
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('user_id', response.data['id']);
+      int user_id = response.data['id'];
+      prefs.setInt('user_id', user_id);
       print('success');
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => ChatHistory()));
